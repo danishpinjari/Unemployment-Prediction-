@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unemployment Rate Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Unemployment Rate Prediction</h1>
+        <form id="predictionForm">
+            <label for="cpi">CPI Value:</label>
+            <input type="number" id="cpi" name="cpi" step="any" required>
+            
+            <label for="gdp">GDP Value:</label>
+            <input type="number" id="gdp" name="gdp" step="any" required>
+            
+            <button type="submit">Predict Unemployment Rate</button>
+        </form>
+        <div id="result" class="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const cpi = document.getElementById('cpi').value;
+            const gdp = document.getElementById('gdp').value;
+
+            // Update the fetch URL to your FastAPI server's predict endpoint
+            const response = await fetch('http://127.0.0.1:8000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ cpi: parseFloat(cpi), gdp: parseFloat(gdp) }),
+            });
+
+            // Check if the response is ok (status 200-299)
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('result').innerText = `Predicted Unemployment Rate: ${data.prediction}`;
+                document.getElementById('result').style.display = 'block';
+            } else {
+                const errorData = await response.json();
+                document.getElementById('result').innerText = `Error: ${errorData.detail || 'Failed to get prediction'}`;
+                document.getElementById('result').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

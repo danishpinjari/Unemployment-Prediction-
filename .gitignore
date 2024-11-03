@@ -1,0 +1,26 @@
+# Python cache files
+__pycache__/
+*.pyc
+
+# Virtual environment
+env/
+venv/
+.venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Data files
+*.pkl
+
+# MacOS system files
+.DS_Store
+
+# Environment variables
+.env
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
