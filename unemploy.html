@@ -64,6 +64,8 @@
             <button type="submit">Predict Unemployment Rate</button>
         </form>
         <div id="result" class="result" style="display:none;"></div>
+        <div id="trendPlot" style="display:none;"></div>
+        <div id="correlationPlot" style="display:none;"></div>
     </div>
 
     <script>
@@ -85,14 +87,18 @@
             // Check if the response is ok (status 200-299)
             if (response.ok) {
                 const data = await response.json();
-                document.getElementById('result').innerText = `Predicted Unemployment Rate: ${data.prediction}`;
+                document.getElementById('result').innerText = `Predicted Unemployment Rate: ${data.predicted_unemployment_rate}%`;
                 document.getElementById('result').style.display = 'block';
+
+                // Fetch trend and correlation plots
+                await fetchAndDisplayPlots(cpi, gdp);
             } else {
                 const errorData = await response.json();
                 document.getElementById('result').innerText = `Error: ${errorData.detail || 'Failed to get prediction'}`;
                 document.getElementById('result').style.display = 'block';
             }
         });
+
     </script>
 </body>
 </html>
