@@ -10,9 +10,6 @@ venv/
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints
 
-# Data files
-*.pkl
-
 # MacOS system files
 .DS_Store
 
