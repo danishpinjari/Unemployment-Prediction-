@@ -1,10 +1,8 @@
 # Import necessary libraries
 from fastapi import FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import numpy as np
 import pickle
-import plotly.graph_objs as go
 import uvicorn
 import os
 from fastapi.responses import HTMLResponse
@@ -23,11 +21,6 @@ app = FastAPI(
     description="API for predicting unemployment rate based on economic indicators",
     version="1.0"
 )
-
-# Mount the static directory to serve images
-if not os.path.exists("static"):
-    os.makedirs("static")
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Define input data model
 class Indicators(BaseModel):
