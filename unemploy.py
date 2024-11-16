@@ -7,6 +7,7 @@ import uvicorn
 import os
 from fastapi.responses import HTMLResponse
 import pandas as pd
+from fastapi.middleware.cors import CORSMiddleware
 
 # Load the saved model at startup
 try:
@@ -20,6 +21,14 @@ app = FastAPI(
     title="Unemployment Rate Prediction API",
     description="API for predicting unemployment rate based on economic indicators",
     version="1.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Use ["*"] for testing, but restrict it to specific domains in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Define input data model

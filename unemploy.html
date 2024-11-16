@@ -69,35 +69,35 @@
     </div>
 
     <script>
-        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+ document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-            const cpi = document.getElementById('cpi').value;
-            const gdp = document.getElementById('gdp').value;
+    const cpi = document.getElementById('cpi').value;
+    const gdp = document.getElementById('gdp').value;
 
-            // Update the fetch URL to your FastAPI server's predict endpoint
-            const response = await fetch('http://127.0.0.1:8000/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ cpi: parseFloat(cpi), gdp: parseFloat(gdp) }),
-            });
-
-            // Check if the response is ok (status 200-299)
-            if (response.ok) {
-                const data = await response.json();
-                document.getElementById('result').innerText = `Predicted Unemployment Rate: ${data.predicted_unemployment_rate}%`;
-                document.getElementById('result').style.display = 'block';
-
-                // Fetch trend and correlation plots
-                await fetchAndDisplayPlots(cpi, gdp);
-            } else {
-                const errorData = await response.json();
-                document.getElementById('result').innerText = `Error: ${errorData.detail || 'Failed to get prediction'}`;
-                document.getElementById('result').style.display = 'block';
-            }
+    try {
+        const response = await fetch('https://unemployment-prediction.onrender.com', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ cpi: parseFloat(cpi), gdp: parseFloat(gdp) }),
         });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('result').innerText = `Predicted Unemployment Rate: ${data.predicted_unemployment_rate}%`;
+            document.getElementById('result').style.display = 'block';
+        } else {
+            const errorData = await response.json();
+            document.getElementById('result').innerText = `Error: ${errorData.detail || 'Failed to get prediction'}`;
+            document.getElementById('result').style.display = 'block';
+        }
+    } catch (error) {
+        document.getElementById('result').innerText = `Error: Unable to connect to the server. Please try again later.`;
+        document.getElementById('result').style.display = 'block';
+    }
+});
 
     </script>
 </body>
