@@ -1,10 +1,8 @@
 # Import necessary libraries
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import numpy as np
 import pickle
 import uvicorn
-import os
 from fastapi.responses import HTMLResponse
 import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,9 +21,10 @@ app = FastAPI(
     version="1.0"
 )
 
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Use ["*"] for testing, but restrict it to specific domains in production
+    allow_origins=["*"],  # Use ["*"] for testing, but restrict in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,19 +38,22 @@ class Indicators(BaseModel):
 # Prediction endpoint
 @app.post("/predict")
 async def predict_unemployment_rate(indicators: Indicators):
-    # Create DataFrame with the same column names used during model training
-    input_data = pd.DataFrame({
-        "CPI Value": [indicators.cpi],
-        "GDP value": [indicators.gdp]
-    })
-    
-    # Validate if the model has predict method
-    if not hasattr(model, 'predict'):
-        raise HTTPException(status_code=500, detail="Model is not capable of predictions.")
-    
-    # Predict unemployment rate
-    prediction = model.predict(input_data)[0]
-    return {"predicted_unemployment_rate": round(prediction, 2)}
+    try:
+        # Create DataFrame with the same column names used during model training
+        input_data = pd.DataFrame({
+            "CPI Value": [indicators.cpi],
+            "GDP value": [indicators.gdp]
+        })
+        
+        # Ensure the model can make predictions
+        if not hasattr(model, 'predict'):
+            raise HTTPException(status_code=500, detail="Model is not capable of predictions.")
+        
+        # Predict unemployment rate
+        prediction = model.predict(input_data)[0]
+        return {"predicted_unemployment_rate": round(prediction, 2)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred during prediction: {str(e)}")
 
 # Root endpoint to render the HTML page
 @app.get("/", response_class=HTMLResponse)

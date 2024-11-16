@@ -64,19 +64,17 @@
             <button type="submit">Predict Unemployment Rate</button>
         </form>
         <div id="result" class="result" style="display:none;"></div>
-        <div id="trendPlot" style="display:none;"></div>
-        <div id="correlationPlot" style="display:none;"></div>
     </div>
 
     <script>
- document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+document.getElementById('predictionForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const cpi = document.getElementById('cpi').value;
     const gdp = document.getElementById('gdp').value;
 
     try {
-        const response = await fetch('https://unemployment-prediction.onrender.com', {
+        const response = await fetch('http://127.0.0.1:8000/predict', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -84,17 +82,16 @@
             body: JSON.stringify({ cpi: parseFloat(cpi), gdp: parseFloat(gdp) }),
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            document.getElementById('result').innerText = `Predicted Unemployment Rate: ${data.predicted_unemployment_rate}%`;
-            document.getElementById('result').style.display = 'block';
-        } else {
+        if (!response.ok) {
             const errorData = await response.json();
             document.getElementById('result').innerText = `Error: ${errorData.detail || 'Failed to get prediction'}`;
-            document.getElementById('result').style.display = 'block';
+        } else {
+            const data = await response.json();
+            document.getElementById('result').innerText = `Predicted Unemployment Rate: ${data.predicted_unemployment_rate}%`;
         }
+        document.getElementById('result').style.display = 'block';
     } catch (error) {
-        document.getElementById('result').innerText = `Error: Unable to connect to the server. Please try again later.`;
+        document.getElementById('result').innerText = `Error: ${error.message}`;
         document.getElementById('result').style.display = 'block';
     }
 });
